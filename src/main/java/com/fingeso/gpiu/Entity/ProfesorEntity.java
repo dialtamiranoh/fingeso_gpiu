@@ -1,10 +1,9 @@
 package com.fingeso.gpiu.Entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.Data;
 import java.util.List;
 
-@Data
 @Entity
 @Table(name = "profesor")
 public class ProfesorEntity extends UsuarioEntity {
@@ -15,6 +14,7 @@ public class ProfesorEntity extends UsuarioEntity {
     @Column(name = "especialidad", length = 200)
     private String especialidad;
 
+    @JsonIgnore
     @ManyToMany
     @JoinTable(
             name = "profesor_curso",
@@ -23,4 +23,13 @@ public class ProfesorEntity extends UsuarioEntity {
     )
     private List<CursoEntity> cursos;
 
+    // Getters y Setters
+    public String getDepartamento() { return departamento; }
+    public void setDepartamento(String departamento) { this.departamento = departamento; }
+
+    public String getEspecialidad() { return especialidad; }
+    public void setEspecialidad(String especialidad) { this.especialidad = especialidad; }
+
+    public List<CursoEntity> getCursos() { return cursos; }
+    public void setCursos(List<CursoEntity> cursos) { this.cursos = cursos; }
 }
