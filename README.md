@@ -18,7 +18,10 @@ GPIU es una aplicación web que permite:
 
 ### Frontend
 - Vue.js 3.5.13
-- Node.js 21.7.1
+- Node.js 20+ o 24+
+- Axios
+- Vue Router
+- Vuetify
 
 ---
 
@@ -39,6 +42,14 @@ GPIU es una aplicación web que permite:
 ### 3. Instalar Maven (opcional si usas el wrapper)
 - **Windows/Mac/Linux:** https://maven.apache.org/download.cgi
 - El proyecto incluye Maven Wrapper (`mvnw` / `mvnw.cmd`)
+
+### 4. Instalar Node.js 20+
+- **Windows/Mac/Linux:** https://nodejs.org/
+- Verificar instalación:
+  ```bash
+  node --version
+  npm --version
+  ```
 
 ---
 
@@ -156,6 +167,49 @@ Started GpiuApplication in X.XXX seconds
 ```
 
 El backend estará disponible en: `http://localhost:8081`
+
+---
+
+## Ejecutar Frontend
+
+### 1. Instalar dependencias
+
+```bash
+cd frontend
+npm install
+```
+
+### 2. Ejecutar en modo desarrollo
+
+```bash
+npm run dev
+```
+
+El frontend estará disponible en: `http://localhost:5173`
+
+### 3. Verificar conexión con Backend
+
+Asegúrate de que el backend esté corriendo en `http://localhost:8081` antes de usar el frontend.
+
+---
+
+## Uso de la Aplicación
+
+### Página Principal
+- Accede a `http://localhost:5173`
+- Verás dos opciones principales: **Consultar Horarios** y **Puntos de Información**
+
+### Consultar Horarios
+1. Click en "Ir a Horarios"
+2. Selecciona tipo de usuario (Alumno o Profesor)
+3. Ingresa ID de usuario (ejemplo: 1)
+4. Click en "Buscar"
+5. Verás la tabla de horarios con: Curso, Sala, Día, Hora Inicio, Hora Fin
+
+### Puntos de Información (PIU)
+1. Click en "Ver PIUs"
+2. Al cargar la página, se muestran automáticamente todos los PIUs activos
+3. Click en "Buscar PIU Cercano" para encontrar el más cercano a las coordenadas USACH
 
 ---
 
@@ -289,7 +343,7 @@ curl "http://localhost:8081/api/piu/cercano?lat=-33.4489&lon=-70.6693"
 
 ```
 gpiu/
-├── src/
+├── src/                                    # Backend (Spring Boot)
 │   ├── main/
 │   │   ├── java/com/fingeso/gpiu/
 │   │   │   ├── Controller/
@@ -318,7 +372,24 @@ gpiu/
 │   │   └── resources/
 │   │       └── application.properties
 │   └── test/
+├── frontend/                               # Frontend (Vue.js)
+│   ├── src/
+│   │   ├── components/
+│   │   ├── views/
+│   │   │   ├── HomeView.vue
+│   │   │   ├── HorariosView.vue
+│   │   │   └── PiuView.vue
+│   │   ├── router/
+│   │   │   └── index.js
+│   │   ├── services/
+│   │   │   └── api.js
+│   │   ├── App.vue
+│   │   └── main.js
+│   ├── public/
+│   ├── package.json
+│   └── vite.config.js
 ├── pom.xml
+├── .gitignore
 └── README.md
 ```
 
@@ -326,8 +397,14 @@ gpiu/
 
 ## Arquitectura
 
-### Patrón de Capas
+### Stack Tecnológico
 
+**Frontend (Vue.js 3)**
+```
+Vue Components → Vue Router → Axios → REST API
+```
+
+**Backend (Spring Boot)**
 ```
 Controller (REST API)
     ↓
@@ -338,6 +415,22 @@ Repository (Acceso a Datos)
 Entity (Modelo de Datos)
     ↓
 PostgreSQL (Base de Datos)
+```
+
+### Flujo de Datos
+
+```
+Usuario → Vue.js (Frontend:5173)
+    ↓
+Axios HTTP Request
+    ↓
+Spring Boot (Backend:8081)
+    ↓
+PostgreSQL (Database:5432)
+    ↓
+JSON Response
+    ↓
+Vue.js (Renderizado)
 ```
 
 ### Modelo de Datos
@@ -357,7 +450,9 @@ PostgreSQL (Base de Datos)
 
 ## Troubleshooting
 
-### Error: "Port 8081 already in use"
+### Backend
+
+#### Error: "Port 8081 already in use"
 
 **Solución 1:** Cambiar puerto en `application.properties`:
 ```properties
@@ -370,7 +465,7 @@ netstat -ano | findstr :8081
 taskkill /PID [PID] /F
 ```
 
-### Error: "Connection refused"
+#### Error: "Connection refused"
 
 Verificar que PostgreSQL está corriendo:
 ```bash
@@ -384,23 +479,64 @@ brew services list | grep postgresql
 sudo systemctl status postgresql
 ```
 
-### Error: "Authentication failed for user"
+#### Error: "Authentication failed for user"
 
 Verificar credenciales en `application.properties` y que el usuario existe en PostgreSQL:
 ```bash
 psql -U postgres -c "\du"
 ```
 
-### Error: "Database does not exist"
+#### Error: "Database does not exist"
 
 Crear la base de datos:
 ```bash
 psql -U postgres -c "CREATE DATABASE gpiu_db;"
 ```
 
-### Error: "Permission denied for schema public"
+#### Error: "Permission denied for schema public"
 
 Ejecutar los comandos GRANT del paso "Configuración de Base de Datos".
+
+#### Error: "Document nesting depth exceeds maximum"
+
+Si aparece este error al consultar horarios, verifica que todas las entities tengan `@JsonIgnore` en las relaciones inversas:
+- `AlumnoEntity.cursos` → `@JsonIgnore`
+- `ProfesorEntity.cursos` → `@JsonIgnore`
+- `CursoEntity.alumnos` y `CursoEntity.profesores` → `@JsonIgnore`
+- `SalaEntity.horarios` → `@JsonIgnore`
+
+### Frontend
+
+#### Error: "Cannot GET /"
+
+El servidor de desarrollo no está corriendo. Ejecutar:
+```bash
+cd frontend
+npm run dev
+```
+
+#### Error: "Network Error" o "ERR_CONNECTION_REFUSED"
+
+El backend no está corriendo o está en diferente puerto. Verificar:
+1. Backend corriendo en `http://localhost:8081`
+2. Archivo `frontend/src/services/api.js` tiene URL correcta
+
+#### Error: "npm: command not found"
+
+Node.js no está instalado. Descargar desde https://nodejs.org/
+
+#### Error: Página en blanco sin errores
+
+1. Abrir consola del navegador (F12)
+2. Verificar errores en pestaña Console
+3. Verificar que todas las vistas existen en `frontend/src/views/`
+
+#### CORS Error
+
+Si aparece error de CORS, agregar en el Controller:
+```java
+@CrossOrigin(origins = "http://localhost:5173")
+```
 
 ---
 
@@ -410,32 +546,132 @@ Ejecutar los comandos GRANT del paso "Configuración de Base de Datos".
 
 ```xml
 <dependencies>
-    <!-- Spring Boot Starter Data JPA -->
-    <dependency>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-data-jpa</artifactId>
-    </dependency>
-    
-    <!-- Spring Boot Starter Web -->
-    <dependency>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-web</artifactId>
-    </dependency>
-    
-    <!-- PostgreSQL Driver -->
-    <dependency>
-        <groupId>org.postgresql</groupId>
-        <artifactId>postgresql</artifactId>
-        <scope>runtime</scope>
-    </dependency>
-    
-    <!-- Lombok -->
-    <dependency>
-        <groupId>org.projectlombok</groupId>
-        <artifactId>lombok</artifactId>
-        <optional>true</optional>
-    </dependency>
+  <!-- Spring Boot Starter Data JPA -->
+  <dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-data-jpa</artifactId>
+  </dependency>
+
+  <!-- Spring Boot Starter Web -->
+  <dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-web</artifactId>
+  </dependency>
+
+  <!-- PostgreSQL Driver -->
+  <dependency>
+    <groupId>org.postgresql</groupId>
+    <artifactId>postgresql</artifactId>
+    <scope>runtime</scope>
+  </dependency>
+
+  <!-- Lombok -->
+  <dependency>
+    <groupId>org.projectlombok</groupId>
+    <artifactId>lombok</artifactId>
+    <optional>true</optional>
+  </dependency>
 </dependencies>
+```
+
+### Frontend (package.json)
+
+```json
+{
+  "dependencies": {
+    "vue": "^3.5.13",
+    "vue-router": "^4.4.5",
+    "axios": "^1.7.2",
+    "vuetify": "^3.7.5"
+  }
+}
+```
+
+---
+
+## .gitignore Recomendado
+
+```gitignore
+# Maven
+target/
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+
+# IntelliJ IDEA
+.idea/
+*.iml
+*.iws
+*.ipr
+
+# Eclipse
+.classpath
+.project
+.settings/
+
+# VS Code
+.vscode/
+
+# Logs
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Frontend
+frontend/node_modules/
+frontend/dist/
+frontend/.env
+frontend/.env.local
+```
+
+---
+
+## Comandos Útiles
+
+### Backend
+```bash
+# Compilar proyecto
+mvn clean install
+
+# Ejecutar tests
+mvn test
+
+# Ejecutar aplicación
+mvn spring-boot:run
+```
+
+### Frontend
+```bash
+# Instalar dependencias
+npm install
+
+# Ejecutar en desarrollo
+npm run dev
+
+# Build para producción
+npm run build
+
+# Preview build de producción
+npm run preview
+```
+
+### Base de Datos
+```bash
+# Conectar a PostgreSQL
+psql -U gpiu_user -d gpiu_db
+
+# Ver tablas
+\dt
+
+# Ver estructura de tabla
+\d nombre_tabla
+
+# Ejecutar script SQL
+\i ruta/al/archivo.sql
 ```
 
 ---
