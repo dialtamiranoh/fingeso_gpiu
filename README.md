@@ -21,7 +21,7 @@ GPIU es una aplicación web que permite:
 - Node.js 20+ o 24+
 - Axios
 - Vue Router
-- Vuetify
+- Leaflet.js (mapas interactivos con OpenStreetMap)
 
 ---
 
@@ -202,14 +202,39 @@ Asegúrate de que el backend esté corriendo en `http://localhost:8081` antes de
 ### Consultar Horarios
 1. Click en "Ir a Horarios"
 2. Selecciona tipo de usuario (Alumno o Profesor)
-3. Ingresa ID de usuario (ejemplo: 1)
+3. Ingresa ID de usuario (ejemplo: 1 para alumno, 2 para profesor)
 4. Click en "Buscar"
 5. Verás la tabla de horarios con: Curso, Sala, Día, Hora Inicio, Hora Fin
 
 ### Puntos de Información (PIU)
 1. Click en "Ver PIUs"
-2. Al cargar la página, se muestran automáticamente todos los PIUs activos
-3. Click en "Buscar PIU Cercano" para encontrar el más cercano a las coordenadas USACH
+2. Al cargar la página, se muestran automáticamente:
+  - **Mapa interactivo** con todos los PIUs del campus USACH usando OpenStreetMap
+  - Marcadores en las ubicaciones exactas de cada PIU
+3. **Interacción con el mapa:**
+  - Zoom: Usa la rueda del mouse o los botones +/-
+  - Pan: Arrastra el mapa con el mouse
+  - Click en marcadores: Muestra información del PIU (nombre, descripción, ubicación, estado)
+4. **Buscar PIU Cercano:** Encuentra el PIU más cercano a las coordenadas del campus central USACH
+5. **Lista de PIUs:** Debajo del mapa se muestran tarjetas con todos los PIUs y sus detalles
+
+### Ubicaciones Reales del Campus
+El sistema incluye 15 puntos de información en ubicaciones reales:
+- Laboratorio CIBAP
+- Facultad de Arquitectura
+- Programa Bachillerato
+- Ingeniería Informática
+- Ingeniería Industrial
+- Facultad Tecnológica
+- Laboratorios de Física
+- Ingeniería Eléctrica
+- Departamento de Acceso Inclusivo
+- Gimnasio USACH
+- Escuela de Artes y Oficios
+- Departamento de Admisión
+- Biblioteca Central
+- Salas de Innovación Docente
+- Casa Central USACH
 
 ---
 
@@ -305,11 +330,23 @@ INSERT INTO horario (id_curso, id_sala, dia, hora_inicio, hora_fin) VALUES
 (2, 1, 'MIERCOLES', '20:05:00', '21:25:00'),
 (2, 2, 'SABADO', '09:50:00', '11:10:00');
 
--- Insertar PIUs
-INSERT INTO piu (nombre, descripcion, latitud, longitud, tipo_ubicacion, estado) VALUES 
-('PIU Central', 'Punto de información principal', -33.4489, -70.6693, 'EXTERIOR', 'ACTIVO'),
-('PIU Ingeniería', 'Punto en Facultad de Ingeniería', -33.4490, -70.6694, 'INTERIOR', 'ACTIVO'),
-('PIU Biblioteca', 'Punto en Biblioteca Central', -33.4488, -70.6695, 'INTERIOR', 'ACTIVO');
+-- Insertar PIUs con coordenadas reales del campus USACH
+INSERT INTO piu (nombre, descripcion, latitud, longitud, tipo_ubicacion, nombre_edificio, estado) VALUES
+('PIU Laboratorio CIBAP', 'Punto de información en Laboratorio CIBAP', -33.451938265740665, -70.68692182072735, 'INTERIOR', 'Laboratorio CIBAP', 'ACTIVO'),
+('PIU Facultad Arquitectura', 'Punto de información en Facultad de Arquitectura', -33.451542043065224, -70.68573083284173, 'INTERIOR', 'Facultad de Arquitectura', 'ACTIVO'),
+('PIU Programa Bachillerato', 'Punto de información en Edificio Programa Bachillerato', -33.451406823804554, -70.68679744539094, 'INTERIOR', 'Edificio Programa Bachillerato', 'ACTIVO'),
+('PIU Ingeniería Informática', 'Punto de información en Departamento de Ingeniería Informática', -33.44973919636552, -70.68729701329192, 'INTERIOR', 'Departamento de Ingeniería Informática', 'ACTIVO'),
+('PIU Ingeniería Industrial', 'Punto de información en Departamento de Ingeniería Industrial', -33.45026900906702, -70.68837428070603, 'INTERIOR', 'Departamento de Ingeniería Industrial', 'ACTIVO'),
+('PIU Facultad Tecnológica', 'Punto de información en Facultad Tecnológica', -33.449670663140104, -70.68845325923971, 'INTERIOR', 'Facultad Tecnológica', 'ACTIVO'),
+('PIU Laboratorios Física', 'Punto de información en Laboratorios de Física', -33.45001069283187, -70.6841694629556, 'INTERIOR', 'Laboratorios de Física', 'ACTIVO'),
+('PIU Ingeniería Eléctrica', 'Punto de información en Departamento de Ingeniería Eléctrica', -33.45001069283187, -70.6841694629556, 'INTERIOR', 'Departamento de Ingeniería Eléctrica', 'ACTIVO'),
+('PIU Acceso Inclusivo', 'Punto de información en Departamento de Acceso Inclusivo', -33.45001069283187, -70.6841694629556, 'INTERIOR', 'Departamento de Acceso Inclusivo', 'ACTIVO'),
+('PIU Gimnasio USACH', 'Punto de información en Gimnasio USACH', -33.449459791340935, -70.68569532840895, 'INTERIOR', 'Gimnasio USACH', 'ACTIVO'),
+('PIU Escuela Artes y Oficios', 'Punto de información en Escuela de Artes y Oficios', -33.44999902246814, -70.68648122868105, 'INTERIOR', 'Escuela de Artes y Oficios', 'ACTIVO'),
+('PIU Departamento Admisión', 'Punto de información en Departamento de Admisión', -33.450211993890456, -70.68536700973577, 'INTERIOR', 'Departamento de Admisión', 'ACTIVO'),
+('PIU Biblioteca Central', 'Punto de información en Biblioteca Central', -33.45029533038747, -70.68309418065391, 'INTERIOR', 'Biblioteca Central', 'ACTIVO'),
+('PIU Salas Innovación', 'Punto de información en Edificio Salas de Innovación Docente', -33.451021845095546, -70.68433838540292, 'INTERIOR', 'Edificio Salas Innovación Docente', 'ACTIVO'),
+('PIU Casa Central', 'Punto de información en Casa Central USACH', -33.448856514534306, -70.6831822179527, 'EXTERIOR', 'Casa Central USACH', 'ACTIVO');
 ```
 
 ---
@@ -531,12 +568,24 @@ Node.js no está instalado. Descargar desde https://nodejs.org/
 2. Verificar errores en pestaña Console
 3. Verificar que todas las vistas existen en `frontend/src/views/`
 
-#### CORS Error
+#### Error: Página en blanco sin errores
 
-Si aparece error de CORS, agregar en el Controller:
-```java
-@CrossOrigin(origins = "http://localhost:5173")
-```
+1. Abrir consola del navegador (F12)
+2. Verificar errores en pestaña Console
+3. Verificar que todas las vistas existen en `frontend/src/views/`
+
+#### Mapa no se muestra
+
+1. Verificar que Leaflet está instalado: `npm list leaflet`
+2. Si no está instalado: `cd frontend && npm install leaflet`
+3. Limpiar caché y reinstalar: `rm -rf node_modules package-lock.json && npm install`
+4. Verificar que el div del mapa tiene altura definida en el CSS
+
+#### Marcadores no aparecen en el mapa
+
+1. Verificar que hay PIUs en la base de datos: `SELECT * FROM piu;`
+2. Verificar que el backend está devolviendo datos: `http://localhost:8081/api/piu`
+3. Revisar coordenadas: latitud y longitud deben ser números válidos
 
 ---
 
@@ -546,31 +595,31 @@ Si aparece error de CORS, agregar en el Controller:
 
 ```xml
 <dependencies>
-  <!-- Spring Boot Starter Data JPA -->
-  <dependency>
-    <groupId>org.springframework.boot</groupId>
-    <artifactId>spring-boot-starter-data-jpa</artifactId>
-  </dependency>
-
-  <!-- Spring Boot Starter Web -->
-  <dependency>
-    <groupId>org.springframework.boot</groupId>
-    <artifactId>spring-boot-starter-web</artifactId>
-  </dependency>
-
-  <!-- PostgreSQL Driver -->
-  <dependency>
-    <groupId>org.postgresql</groupId>
-    <artifactId>postgresql</artifactId>
-    <scope>runtime</scope>
-  </dependency>
-
-  <!-- Lombok -->
-  <dependency>
-    <groupId>org.projectlombok</groupId>
-    <artifactId>lombok</artifactId>
-    <optional>true</optional>
-  </dependency>
+    <!-- Spring Boot Starter Data JPA -->
+    <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-data-jpa</artifactId>
+    </dependency>
+    
+    <!-- Spring Boot Starter Web -->
+    <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-web</artifactId>
+    </dependency>
+    
+    <!-- PostgreSQL Driver -->
+    <dependency>
+        <groupId>org.postgresql</groupId>
+        <artifactId>postgresql</artifactId>
+        <scope>runtime</scope>
+    </dependency>
+    
+    <!-- Lombok -->
+    <dependency>
+        <groupId>org.projectlombok</groupId>
+        <artifactId>lombok</artifactId>
+        <optional>true</optional>
+    </dependency>
 </dependencies>
 ```
 
@@ -582,10 +631,12 @@ Si aparece error de CORS, agregar en el Controller:
     "vue": "^3.5.13",
     "vue-router": "^4.4.5",
     "axios": "^1.7.2",
-    "vuetify": "^3.7.5"
+    "leaflet": "^1.9.4"
   }
 }
 ```
+
+**Nota sobre mapas:** El proyecto usa Leaflet.js con OpenStreetMap (gratuito, sin API key necesaria) para visualizar los PIUs en un mapa interactivo del campus USACH.
 
 ---
 
@@ -673,6 +724,41 @@ psql -U gpiu_user -d gpiu_db
 # Ejecutar script SQL
 \i ruta/al/archivo.sql
 ```
+
+### Agregar Nuevos PIUs
+
+Para agregar nuevos puntos de información con coordenadas reales:
+
+1. **Obtener coordenadas desde Google Maps:**
+  - Ve a https://www.google.com/maps
+  - Busca la ubicación en el campus USACH
+  - Click derecho en el punto exacto
+  - Click en las coordenadas que aparecen
+  - Se copian automáticamente al portapapeles
+
+2. **Insertar en la base de datos:**
+```sql
+
+-- Insertar PIUs con ubicaciones reales del campus USACH
+INSERT INTO piu (nombre, descripcion, latitud, longitud, tipo_ubicacion, nombre_edificio, estado) VALUES
+('PIU Laboratorio CIBAP', 'Punto de información en Laboratorio CIBAP', -33.451938265740665, -70.68692182072735, 'INTERIOR', 'Laboratorio CIBAP', 'ACTIVO'),
+('PIU Facultad Arquitectura', 'Punto de información en Facultad de Arquitectura', -33.451542043065224, -70.68573083284173, 'INTERIOR', 'Facultad de Arquitectura', 'ACTIVO'),
+('PIU Programa Bachillerato', 'Punto de información en Edificio Programa Bachillerato', -33.451406823804554, -70.68679744539094, 'INTERIOR', 'Edificio Programa Bachillerato', 'ACTIVO'),
+('PIU Ingeniería Informática', 'Punto de información en Departamento de Ingeniería Informática', -33.44973919636552, -70.68729701329192, 'INTERIOR', 'Departamento de Ingeniería Informática', 'ACTIVO'),
+('PIU Ingeniería Industrial', 'Punto de información en Departamento de Ingeniería Industrial', -33.45026900906702, -70.68837428070603, 'INTERIOR', 'Departamento de Ingeniería Industrial', 'ACTIVO'),
+('PIU Facultad Tecnológica', 'Punto de información en Facultad Tecnológica', -33.449670663140104, -70.68845325923971, 'INTERIOR', 'Facultad Tecnológica', 'ACTIVO'),
+('PIU Laboratorios Física', 'Punto de información en Laboratorios de Física', -33.45001069283187, -70.6841694629556, 'INTERIOR', 'Laboratorios de Física', 'ACTIVO'),
+('PIU Ingeniería Eléctrica', 'Punto de información en Departamento de Ingeniería Eléctrica', -33.45001069283187, -70.6841694629556, 'INTERIOR', 'Departamento de Ingeniería Eléctrica', 'ACTIVO'),
+('PIU Acceso Inclusivo', 'Punto de información en Departamento de Acceso Inclusivo', -33.45001069283187, -70.6841694629556, 'INTERIOR', 'Departamento de Acceso Inclusivo', 'ACTIVO'),
+('PIU Gimnasio USACH', 'Punto de información en Gimnasio USACH', -33.449459791340935, -70.68569532840895, 'INTERIOR', 'Gimnasio USACH', 'ACTIVO'),
+('PIU Escuela Artes y Oficios', 'Punto de información en Escuela de Artes y Oficios', -33.44999902246814, -70.68648122868105, 'INTERIOR', 'Escuela de Artes y Oficios', 'ACTIVO'),
+('PIU Departamento Admisión', 'Punto de información en Departamento de Admisión', -33.450211993890456, -70.68536700973577, 'INTERIOR', 'Departamento de Admisión', 'ACTIVO'),
+('PIU Biblioteca Central', 'Punto de información en Biblioteca Central', -33.45029533038747, -70.68309418065391, 'INTERIOR', 'Biblioteca Central', 'ACTIVO'),
+('PIU Salas Innovación', 'Punto de información en Edificio Salas de Innovación Docente', -33.451021845095546, -70.68433838540292, 'INTERIOR', 'Edificio Salas Innovación Docente', 'ACTIVO'),
+('PIU Casa Central', 'Punto de información en Casa Central USACH', -33.448856514534306, -70.6831822179527, 'EXTERIOR', 'Casa Central USACH', 'ACTIVO');
+```
+
+3. **Refrescar la aplicación** - Los nuevos PIUs aparecerán automáticamente en el mapa
 
 ---
 
