@@ -19,6 +19,14 @@
           <button>Ver PIUs</button>
         </router-link>
       </div>
+
+      <div class="feature-card">
+        <h2>Información General</h2>
+        <p>Conoce la historia, misión y estructura organizacional</p>
+        <router-link to="/informacion-general">
+          <button>Ver Información</button>
+        </router-link>
+      </div>
     </div>
   </div>
 </template>

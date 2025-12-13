@@ -3,11 +3,6 @@
     <h1>Puntos de Información Universitaria</h1>
     <p class="subtitle">Universidad de Santiago de Chile</p>
 
-    <div class="actions">
-      <button @click="cargarPius" class="btn-primary">Mostrar Todos los PIUs</button>
-      <button @click="buscarCercano" class="btn-primary">Buscar PIU Cercano</button>
-    </div>
-
     <div v-if="loading" class="loading">Cargando...</div>
     <div v-if="error" class="error">{{ error }}</div>
 
@@ -15,7 +10,8 @@
     <div v-if="pius.length > 0" class="mapa-section">
       <h2>Mapa de PIUs</h2>
       <div class="map-wrapper">
-        <MapaPiu :pius="pius" />
+        <button @click="centrarVista" class="btn-centrar">Centrar Vista</button>
+        <MapaPiu :pius="pius" ref="mapaRef" />
       </div>
     </div>
 
@@ -68,20 +64,10 @@ export default {
       }
     },
 
-    async buscarCercano() {
-      this.loading = true;
-      this.error = null;
-
-      const lat = -33.4489;
-      const lon = -70.6693;
-
-      try {
-        const response = await api.getPiuCercano(lat, lon);
-        this.pius = [response.data];
-      } catch (err) {
-        this.error = 'Error al buscar PIU cercano: ' + err.message;
-      } finally {
-        this.loading = false;
+    centrarVista() {
+      // Llama al método del componente hijo MapaPiu para centrar la vista
+      if (this.$refs.mapaRef) {
+        this.$refs.mapaRef.centrarEnPius();
       }
     }
   },
@@ -112,27 +98,6 @@ h1 {
   font-size: 1.1em;
 }
 
-.actions {
-  text-align: center;
-  margin: 30px 0;
-}
-
-.btn-primary {
-  padding: 12px 24px;
-  margin: 0 10px;
-  background-color: #42b983;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 1em;
-  transition: background-color 0.3s;
-}
-
-.btn-primary:hover {
-  background-color: #359268;
-}
-
 .loading {
   text-align: center;
   padding: 20px;
@@ -160,10 +125,35 @@ h1 {
 }
 
 .map-wrapper {
+  position: relative;
   border: 2px solid #42b983;
   border-radius: 8px;
   overflow: hidden;
   box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.btn-centrar {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 1000;
+  padding: 10px 16px;
+  background-color: white;
+  color: #42b983;
+  border: 2px solid #42b983;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9em;
+  font-weight: bold;
+  transition: all 0.3s;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.btn-centrar:hover {
+  background-color: #42b983;
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.3);
 }
 
 .pius-section {

@@ -4,6 +4,7 @@
       <router-link to="/">Inicio</router-link>
       <router-link to="/horarios">Horarios</router-link>
       <router-link to="/piu">PIUs</router-link>
+      <router-link to="/informacion-general">Información</router-link>
     </nav>
     <router-view/>
   </div>
