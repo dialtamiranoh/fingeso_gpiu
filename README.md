@@ -5,8 +5,136 @@ Sistema de gestión de puntos de información universitaria para Universidad de 
 ## Descripción
 
 GPIU es una aplicación web que permite:
+- **CU-002:** Revisar información general de la universidad
 - **CU-004:** Consultar horarios de clases para alumnos y profesores
 - **CU-PIU:** Visualizar puntos de información en mapa interactivo del campus
+
+---
+
+## Casos de Uso
+
+### CU-002: Revisar información general de la universidad
+
+| Campo | Descripción |
+|-------|-------------|
+| **ID** | CU_02 |
+| **Nombre descriptivo** | Revisar información general de la universidad |
+| **Descripción** | Muestra historia de la universidad además de la estructuración organizacional y distribución del campus |
+| **Actores** | USU_001 (Funcionario), USU_002 (Profesor), USU_003 (Alumno) |
+| **Precondiciones** | El PIU debe estar inicializado y cargado general |
+
+**Secuencia Normal:**
+
+| N° Paso | Acción |
+|---------|--------|
+| 1 | El usuario escoge la opción "Revisar información general" en el menú de inicio |
+| 2 | El sistema despliega todas las secciones disponibles |
+| 3 | El usuario selecciona categoría |
+| 4 | El sistema muestra la información correspondiente |
+
+**Excepción 1:**
+
+| N° Paso | Acción |
+|---------|--------|
+| 2 | No hay conexión |
+
+**Postcondiciones:**
+
+| N° Paso | Acción |
+|---------|--------|
+| 5 | El usuario deberá volver al menú de inicio |
+
+---
+
+### CU-004: Consultar horario de clases
+
+| Campo | Descripción |
+|-------|-------------|
+| **ID** | CU_04 |
+| **Nombre descriptivo** | Consultar horario de clases |
+| **Descripción** | Los usuarios pueden consultar su horario de clases semanal correspondiente a su rol |
+| **Actores** | USU_002 (Profesor), USU_003 (Alumno) |
+| **Precondiciones** | El usuario debe estar autenticado y debe pertenecer a uno de los dos roles mencionados |
+
+**Secuencia Normal:**
+
+| N° Paso | Acción |
+|---------|--------|
+| 1 | El usuario selecciona su información |
+| 2 | El sistema genera el horario del usuario |
+| 3 | El horario se muestra en pantalla |
+
+**Excepción 1:**
+
+| N° Paso | Acción |
+|---------|--------|
+| 2 | No hay horario correspondiente al usuario |
+
+**Postcondiciones:**
+
+| N° Paso | Acción |
+|---------|--------|
+| 4 | El usuario debe cerrar sesión |
+
+---
+
+## Requisitos Funcionales
+
+### RF-001: Mostrar información general de la universidad
+
+| Campo | Descripción |
+|-------|-------------|
+| **ID** | RF-001 |
+| **Nombre del requisito** | Mostrar información general de la universidad |
+| **Descripción** | El sistema debe mostrar la historia de la universidad, estructura organizacional y distribución del campus para que los usuarios conozcan la institución |
+| **Entrada** | Solicitud de información general por parte del usuario |
+| **Salida** | Pantalla con historia, organigrama y mapa del campus |
+| **Prioridad** | MUST (MoSCoW) - Alta |
+| **Usuario(s)** | USU_001 (Funcionario), USU_002 (Profesor), USU_003 (Alumno) |
+
+---
+
+### RF-007: Mostrar horario y ubicación de clases del profesor
+
+| Campo | Descripción |
+|-------|-------------|
+| **ID** | RF-007 |
+| **Nombre del requisito** | Mostrar horario y ubicación de clases del profesor |
+| **Descripción** | El profesor debe poder visualizar la asignación de horarios de clases y la ubicación de las salas para saber cuándo y dónde debe impartir sus clases |
+| **Entrada** | Identificación del profesor autenticado |
+| **Salida** | Calendario semanal con horarios y mapa de ubicación de salas |
+| **Prioridad** | MUST (MoSCoW) - Alta |
+| **Usuario(s)** | USU_002 (Profesor) |
+
+---
+
+### RF-011: Mostrar horario y ubicación de clases del alumno
+
+| Campo | Descripción |
+|-------|-------------|
+| **ID** | RF-011 |
+| **Nombre del requisito** | Mostrar horario y ubicación de clases del alumno |
+| **Descripción** | El alumno debe poder visualizar su horario de clases y las ubicaciones de sus salas para saber cuándo y dónde debe asistir |
+| **Entrada** | Identificación del alumno autenticado |
+| **Salida** | Calendario semanal con horarios y mapa de ubicación de salas |
+| **Prioridad** | MUST (MoSCoW) - Alta |
+| **Usuario(s)** | USU_003 (Alumno) |
+
+---
+
+### RF-012: Registrar ubicación de instalación de PIU
+
+| Campo | Descripción |
+|-------|-------------|
+| **ID** | RF-012 |
+| **Nombre del requisito** | Registrar ubicación de instalación de PIU |
+| **Descripción** | El administrador debe poder registrar la instalación de un PIU en una ubicación específica (escuela, departamento, facultad) para notificar la instalación de dispositivos |
+| **Entrada** | Datos del PIU (ID, tipo), ubicación (escuela, departamento, facultad) |
+| **Salida** | Confirmación de registro exitoso |
+| **Prioridad** | MUST (MoSCoW) - Alta |
+| **Usuario(s)** | USU_004 (Administrador) |
+
+---
 
 ## Tecnologías
 
@@ -22,6 +150,7 @@ GPIU es una aplicación web que permite:
 - Axios
 - Vue Router
 - Leaflet.js (mapas interactivos con OpenStreetMap)
+- Vuetify 3 (Material Design)
 
 ---
 
@@ -209,14 +338,14 @@ Asegúrate de que el backend esté corriendo en `http://localhost:8081` antes de
 ### Puntos de Información (PIU)
 1. Click en "Ver PIUs"
 2. Al cargar la página, se muestran automáticamente:
-  - **Mapa interactivo** con todos los PIUs del campus USACH usando OpenStreetMap
-  - Marcadores en las ubicaciones exactas de cada PIU
+   - **Mapa interactivo** con todos los PIUs del campus USACH usando OpenStreetMap
+   - Marcadores en las ubicaciones exactas de cada PIU
 3. **Interacción con el mapa:**
-  - Zoom: Usa la rueda del mouse o los botones +/-
-  - Pan: Arrastra el mapa con el mouse
-  - Click en marcadores: Muestra información del PIU (nombre, descripción, ubicación, estado)
-4. **Buscar PIU Cercano:** Encuentra el PIU más cercano a las coordenadas del campus central USACH
-5. **Lista de PIUs:** Debajo del mapa se muestran tarjetas con todos los PIUs y sus detalles
+   - Zoom: Usa la rueda del mouse o los botones +/-
+   - Pan: Arrastra el mapa con el mouse
+   - Click en marcadores: Muestra información del PIU (nombre, descripción, ubicación, estado)
+   - El mapa se ajusta automáticamente para mostrar todos los PIUs
+4. **Lista de PIUs:** Debajo del mapa se muestran tarjetas con todos los PIUs y sus detalles
 
 ### Ubicaciones Reales del Campus
 El sistema incluye 15 puntos de información en ubicaciones reales:
@@ -235,6 +364,21 @@ El sistema incluye 15 puntos de información en ubicaciones reales:
 - Biblioteca Central
 - Salas de Innovación Docente
 - Casa Central USACH
+
+### Información General
+1. Click en "Ver Información"
+2. Se muestran tarjetas con información institucional de la universidad:
+   - **Misión y Valores:** Misión institucional y valores de la USACH
+   - **Acreditación:** Información sobre acreditación institucional
+   - **Rectoría:** Información sobre la máxima autoridad ejecutiva
+   - **Prorrectoría:** Vicerrectoría de apoyo académico y administrativo
+   - **Gobierno Central:** Estructura organizacional de autoridades
+   - **Autoridades:** Directorio completo de autoridades universitarias
+   - **Consejo Universitario:** Órgano colegiado superior
+   - **Asociaciones:** Redes y asociaciones universitarias
+   - **Documentos Universidad:** Acceso a documentos oficiales y reglamentos
+   - **Empresas, Institutos y Fundaciones:** Entidades vinculadas a la USACH
+3. Click en cualquier tarjeta abre el sitio oficial en nueva pestaña
 
 ---
 
@@ -269,14 +413,16 @@ GET http://localhost:8081/api/horarios/profesor/{id}/semanal
 GET http://localhost:8081/api/piu
 ```
 
-#### Obtener PIU más cercano
-```
-GET http://localhost:8081/api/piu/cercano?lat=-33.4489&lon=-70.6693
-```
-
 #### Obtener PIU por ID
 ```
 GET http://localhost:8081/api/piu/{id}
+```
+
+### Información General
+
+#### Listar toda la información general
+```
+GET http://localhost:8081/api/informacion-general
 ```
 
 ---
@@ -347,6 +493,19 @@ INSERT INTO piu (nombre, descripcion, latitud, longitud, tipo_ubicacion, nombre_
 ('PIU Biblioteca Central', 'Punto de información en Biblioteca Central', -33.45029533038747, -70.68309418065391, 'INTERIOR', 'Biblioteca Central', 'ACTIVO'),
 ('PIU Salas Innovación', 'Punto de información en Edificio Salas de Innovación Docente', -33.451021845095546, -70.68433838540292, 'INTERIOR', 'Edificio Salas Innovación Docente', 'ACTIVO'),
 ('PIU Casa Central', 'Punto de información en Casa Central USACH', -33.448856514534306, -70.6831822179527, 'EXTERIOR', 'Casa Central USACH', 'ACTIVO');
+
+-- Insertar información general de la universidad
+INSERT INTO informacion_general (titulo, descripcion, categoria, url, orden_visualizacion) VALUES
+('Misión y Valores', 'Conoce la misión institucional y los valores que guían a la Universidad de Santiago de Chile en su compromiso con la educación pública de excelencia.', 'INSTITUCIONAL', 'https://www.usach.cl/mision-y-valores', 1),
+('Acreditación', 'Información sobre la acreditación institucional y de programas académicos que certifica la calidad de la universidad.', 'INSTITUCIONAL', 'https://www.usach.cl/acreditacion', 2),
+('Rectoría', 'Información sobre la Rectoría, máxima autoridad ejecutiva de la universidad, responsable de la gestión institucional y representación legal.', 'AUTORIDADES', 'https://www.usach.cl/rectoria', 3),
+('Prorrectoría', 'Conoce la Prorrectoría, vicerrectoría que apoya la gestión académica y administrativa de la universidad.', 'AUTORIDADES', 'https://prorrectoria.usach.cl/', 4),
+('Gobierno Central', 'Estructura organizacional de la universidad, conformada por las autoridades superiores que dirigen y administran la institución.', 'AUTORIDADES', 'https://www.usach.cl/gobierno-central', 5),
+('Autoridades', 'Directorio completo de las autoridades universitarias: rectores, decanos, directores y otros cargos administrativos.', 'AUTORIDADES', 'https://www.usach.cl/autoridades', 6),
+('Consejo Universitario', 'Órgano colegiado superior de la universidad encargado de definir políticas y lineamientos estratégicos institucionales.', 'GOBIERNO', 'https://consejouniversitario.usach.cl/', 7),
+('Asociaciones', 'Redes y asociaciones universitarias nacionales e internacionales de las que forma parte la USACH.', 'VINCULACIÓN', 'https://www.usach.cl/asociaciones', 8),
+('Documentos Universidad', 'Acceso a documentos oficiales, reglamentos, estatutos y normativas institucionales de la universidad.', 'DOCUMENTACIÓN', 'https://www.usach.cl/universidad/documentos-universidad', 9),
+('Empresas, Institutos y Fundaciones', 'Empresas, institutos de investigación y fundaciones vinculadas con la Universidad de Santiago de Chile.', 'VINCULACIÓN', 'https://www.usach.cl/empresas-institutos-y-fundaciones', 10);
 ```
 
 ---
@@ -358,7 +517,7 @@ INSERT INTO piu (nombre, descripcion, latitud, longitud, tipo_ubicacion, nombre_
 ```
 http://localhost:8081/api/horarios/alumno/1
 http://localhost:8081/api/piu
-http://localhost:8081/api/piu/cercano?lat=-33.4489&lon=-70.6693
+http://localhost:8081/api/informacion-general
 ```
 
 ### Usando curl:
@@ -370,8 +529,8 @@ curl http://localhost:8081/api/horarios/alumno/1
 # PIUs activos
 curl http://localhost:8081/api/piu
 
-# PIU más cercano
-curl "http://localhost:8081/api/piu/cercano?lat=-33.4489&lon=-70.6693"
+# Información general
+curl http://localhost:8081/api/informacion-general
 ```
 
 ---
@@ -385,10 +544,12 @@ gpiu/
 │   │   ├── java/com/fingeso/gpiu/
 │   │   │   ├── Controller/
 │   │   │   │   ├── HorarioController.java
-│   │   │   │   └── PiuController.java
+│   │   │   │   ├── PiuController.java
+│   │   │   │   └── InformacionGeneralController.java
 │   │   │   ├── Service/
 │   │   │   │   ├── HorarioService.java
-│   │   │   │   └── PiuService.java
+│   │   │   │   ├── PiuService.java
+│   │   │   │   └── InformacionGeneralService.java
 │   │   │   ├── Repository/
 │   │   │   │   ├── AlumnoRepository.java
 │   │   │   │   ├── CursoRepository.java
@@ -396,7 +557,8 @@ gpiu/
 │   │   │   │   ├── PiuRepository.java
 │   │   │   │   ├── ProfesorRepository.java
 │   │   │   │   ├── SalaRepository.java
-│   │   │   │   └── UsuarioRepository.java
+│   │   │   │   ├── UsuarioRepository.java
+│   │   │   │   └── InformacionGeneralRepository.java
 │   │   │   ├── Entity/
 │   │   │   │   ├── AlumnoEntity.java
 │   │   │   │   ├── CursoEntity.java
@@ -404,7 +566,8 @@ gpiu/
 │   │   │   │   ├── PiuEntity.java
 │   │   │   │   ├── ProfesorEntity.java
 │   │   │   │   ├── SalaEntity.java
-│   │   │   │   └── UsuarioEntity.java
+│   │   │   │   ├── UsuarioEntity.java
+│   │   │   │   └── InformacionGeneralEntity.java
 │   │   │   └── GpiuApplication.java
 │   │   └── resources/
 │   │       └── application.properties
@@ -412,10 +575,12 @@ gpiu/
 ├── frontend/                               # Frontend (Vue.js)
 │   ├── src/
 │   │   ├── components/
+│   │   │   └── MapaPiu.vue
 │   │   ├── views/
 │   │   │   ├── HomeView.vue
 │   │   │   ├── HorariosView.vue
-│   │   │   └── PiuView.vue
+│   │   │   ├── PiuView.vue
+│   │   │   └── InformacionGeneralView.vue
 │   │   ├── router/
 │   │   │   └── index.js
 │   │   ├── services/
@@ -482,6 +647,10 @@ Vue.js (Renderizado)
 - Profesor ↔ Curso (Many-to-Many)
 - Horario → Curso (Many-to-One)
 - Horario → Sala (Many-to-One)
+
+**Tablas independientes:**
+- PIU (Puntos de Información Universitaria)
+- InformacionGeneral (Información institucional)
 
 ---
 
@@ -631,12 +800,22 @@ Node.js no está instalado. Descargar desde https://nodejs.org/
     "vue": "^3.5.13",
     "vue-router": "^4.4.5",
     "axios": "^1.7.2",
-    "leaflet": "^1.9.4"
+    "leaflet": "^1.9.4",
+    "vuetify": "^3.7.5",
+    "@mdi/font": "^7.4.47"
   }
 }
 ```
 
+**Instalación de dependencias:**
+```bash
+cd frontend
+npm install
+```
+
 **Nota sobre mapas:** El proyecto usa Leaflet.js con OpenStreetMap (gratuito, sin API key necesaria) para visualizar los PIUs en un mapa interactivo del campus USACH.
+
+**Nota sobre estilos:** El proyecto usa Vuetify 3 (Material Design) para componentes UI y estilos consistentes.
 
 ---
 
@@ -730,32 +909,16 @@ psql -U gpiu_user -d gpiu_db
 Para agregar nuevos puntos de información con coordenadas reales:
 
 1. **Obtener coordenadas desde Google Maps:**
-  - Ve a https://www.google.com/maps
-  - Busca la ubicación en el campus USACH
-  - Click derecho en el punto exacto
-  - Click en las coordenadas que aparecen
-  - Se copian automáticamente al portapapeles
+   - Ve a https://www.google.com/maps
+   - Busca la ubicación en el campus USACH
+   - Click derecho en el punto exacto
+   - Click en las coordenadas que aparecen
+   - Se copian automáticamente al portapapeles
 
 2. **Insertar en la base de datos:**
 ```sql
-
--- Insertar PIUs con ubicaciones reales del campus USACH
-INSERT INTO piu (nombre, descripcion, latitud, longitud, tipo_ubicacion, nombre_edificio, estado) VALUES
-('PIU Laboratorio CIBAP', 'Punto de información en Laboratorio CIBAP', -33.451938265740665, -70.68692182072735, 'INTERIOR', 'Laboratorio CIBAP', 'ACTIVO'),
-('PIU Facultad Arquitectura', 'Punto de información en Facultad de Arquitectura', -33.451542043065224, -70.68573083284173, 'INTERIOR', 'Facultad de Arquitectura', 'ACTIVO'),
-('PIU Programa Bachillerato', 'Punto de información en Edificio Programa Bachillerato', -33.451406823804554, -70.68679744539094, 'INTERIOR', 'Edificio Programa Bachillerato', 'ACTIVO'),
-('PIU Ingeniería Informática', 'Punto de información en Departamento de Ingeniería Informática', -33.44973919636552, -70.68729701329192, 'INTERIOR', 'Departamento de Ingeniería Informática', 'ACTIVO'),
-('PIU Ingeniería Industrial', 'Punto de información en Departamento de Ingeniería Industrial', -33.45026900906702, -70.68837428070603, 'INTERIOR', 'Departamento de Ingeniería Industrial', 'ACTIVO'),
-('PIU Facultad Tecnológica', 'Punto de información en Facultad Tecnológica', -33.449670663140104, -70.68845325923971, 'INTERIOR', 'Facultad Tecnológica', 'ACTIVO'),
-('PIU Laboratorios Física', 'Punto de información en Laboratorios de Física', -33.45001069283187, -70.6841694629556, 'INTERIOR', 'Laboratorios de Física', 'ACTIVO'),
-('PIU Ingeniería Eléctrica', 'Punto de información en Departamento de Ingeniería Eléctrica', -33.45001069283187, -70.6841694629556, 'INTERIOR', 'Departamento de Ingeniería Eléctrica', 'ACTIVO'),
-('PIU Acceso Inclusivo', 'Punto de información en Departamento de Acceso Inclusivo', -33.45001069283187, -70.6841694629556, 'INTERIOR', 'Departamento de Acceso Inclusivo', 'ACTIVO'),
-('PIU Gimnasio USACH', 'Punto de información en Gimnasio USACH', -33.449459791340935, -70.68569532840895, 'INTERIOR', 'Gimnasio USACH', 'ACTIVO'),
-('PIU Escuela Artes y Oficios', 'Punto de información en Escuela de Artes y Oficios', -33.44999902246814, -70.68648122868105, 'INTERIOR', 'Escuela de Artes y Oficios', 'ACTIVO'),
-('PIU Departamento Admisión', 'Punto de información en Departamento de Admisión', -33.450211993890456, -70.68536700973577, 'INTERIOR', 'Departamento de Admisión', 'ACTIVO'),
-('PIU Biblioteca Central', 'Punto de información en Biblioteca Central', -33.45029533038747, -70.68309418065391, 'INTERIOR', 'Biblioteca Central', 'ACTIVO'),
-('PIU Salas Innovación', 'Punto de información en Edificio Salas de Innovación Docente', -33.451021845095546, -70.68433838540292, 'INTERIOR', 'Edificio Salas Innovación Docente', 'ACTIVO'),
-('PIU Casa Central', 'Punto de información en Casa Central USACH', -33.448856514534306, -70.6831822179527, 'EXTERIOR', 'Casa Central USACH', 'ACTIVO');
+INSERT INTO piu (nombre, descripcion, latitud, longitud, tipo_ubicacion, nombre_edificio, estado) 
+VALUES ('Nombre del PIU', 'Descripción', -33.XXXXX, -70.XXXXX, 'INTERIOR', 'Nombre Edificio', 'ACTIVO');
 ```
 
 3. **Refrescar la aplicación** - Los nuevos PIUs aparecerán automáticamente en el mapa
