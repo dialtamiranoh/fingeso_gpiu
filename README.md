@@ -51,6 +51,13 @@ GPIU es una aplicación web que permite:
   npm --version
   ```
 
+### Ejecución rápida con Docker Compose (opcional)
+
+Dentro de la carpeta del repositorio ejecutar:
+
+```bash
+docker compose version >/dev/null 2>&1 || sudo apt install -y docker-compose-plugin ; docker compose up -d --build
+
 ---
 
 ## Configuración de Base de Datos

@@ -1,0 +1,38 @@
+version: "3.9"
+
+services:
+  db:
+    image: postgres:15
+    environment:
+      POSTGRES_DB: gpiu_db
+      POSTGRES_USER: gpiu_user
+      POSTGRES_PASSWORD: gpiu_password
+    ports:
+      - "5432:5432"
+    volumes:
+      - db-data:/var/lib/postgresql/data
+
+  backend:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/gpiu_db
+      SPRING_DATASOURCE_USERNAME: gpiu_user
+      SPRING_DATASOURCE_PASSWORD: gpiu_password
+    ports:
+      - "8081:8081"
+    depends_on:
+      - db
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "5173:80"
+    depends_on:
+      - backend
+
+volumes:
+  db-data:
